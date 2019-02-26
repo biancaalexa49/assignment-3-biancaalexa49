@@ -12,4 +12,21 @@
     <string name="forecast_item_wind">Wind: %1$d MPH %2$s</string>
     <string name="forecast_item_humidity">Humidity: %1$d%%</string>
     <string name="forecast_item_share_text">Forecast for %1$s, %2$s: %3$d%4$s - %5$s #CS492Weather</string>
+
+    <string name="pref_in_title">Units</string>
+
+    <string name="pref_in_imperial_key">Fahrenheit</string>
+    <string name="pref_in_imperial_name_title">Fahrenheit</string>
+
+    <string name="pref_in_metric_key">Celsius</string>
+    <string name="pref_in_metric_title">Celsius</string>
+
+    <string name="pref_in_kelvin_key">Kelvin</string>
+    <string name="pref_in_kelvin_title">Kelvin</string>
+
+    <string name="pref_location_key">Location</string>
+    <string name="pref_location_title">Location</string>
+
+
+
 </resources>

@@ -1,6 +1,7 @@
 package com.example.android.lifecycleweather;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -64,14 +66,19 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.O
         if (savedInstanceState != null && savedInstanceState.containsKey(FORECAST_ITEM_LIST_KEY)) {
             mForecastItemList = (ArrayList<OpenWeatherMapUtils.ForecastItem>) savedInstanceState.getSerializable(FORECAST_ITEM_LIST_KEY);
             mForecastAdapter.updateForecastItems(mForecastItemList);
+        /*    String url = currentForecast();
+            Bundle args = new Bundle();
+            args.putString(FORECAST_URL_KEY, url);
+            mLoadingIndicatorPB.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, args, this);
+        */
         }
-
-        String openWeatherMapForecastURL = OpenWeatherMapUtils.buildForecastURL(WeatherPreferences.getDefaultForecastLocation(), WeatherPreferences.getDefaultTemperatureUnits());
-        Log.d(TAG, "got forecast url: " + openWeatherMapForecastURL);
+        String url = OpenWeatherMapUtils.buildForecastURL(WeatherPreferences.getDefaultForecastLocation(), WeatherPreferences.getDefaultTemperatureUnits());
+        Log.d(TAG, "got forecast url: " + url);
         Bundle args = new Bundle();
-        args.putString(FORECAST_URL_KEY, openWeatherMapForecastURL);
+        args.putString(FORECAST_URL_KEY, url);
         getSupportLoaderManager().initLoader(FORECAST_LOADER_ID, args, this);
-        //reloadForecast();
+
     }
 
     @Override
@@ -132,21 +139,36 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.O
             case R.id.action_location:
                 showForecastLocation();
                 return true;
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void reloadForecast() {
-        String openWeatherMapForecastURL = OpenWeatherMapUtils.buildForecastURL(
-                WeatherPreferences.getDefaultForecastLocation(),
-                WeatherPreferences.getDefaultTemperatureUnits()
-        );
-        Log.d(TAG, "got forecast url: " + openWeatherMapForecastURL);
-        Bundle args = new Bundle();
-        args.putString(FORECAST_URL_KEY, openWeatherMapForecastURL);
-        mLoadingIndicatorPB.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, args, this);
+    public String currentForecast() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String location = preferences.getString(getString(R.string.pref_location_key), "");
+        String units = "";
+        boolean unitsImperial = preferences.getBoolean(getString(R.string.pref_in_imperial_key),true);
+        boolean unitsMetric = preferences.getBoolean(getString(R.string.pref_in_metric_key),false);
+        boolean unitsKelvin = preferences.getBoolean(getString(R.string.pref_in_kelvin_key),false);
+
+        if(unitsImperial){
+            units = "imperial";
+        }
+
+        if(unitsMetric){
+            units = "metric";
+        }
+
+        if(unitsKelvin) {
+            units = "kelvin";
+        }
+        String openWeatherMapForecastURL = OpenWeatherMapUtils.buildForecastURL(location, units);
+        return openWeatherMapForecastURL;
     }
 
     public void showForecastLocation() {

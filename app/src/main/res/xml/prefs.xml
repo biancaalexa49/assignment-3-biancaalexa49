@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="@string/pref_location_key"
+        android:title="@string/pref_location_title" />
+
+    <PreferenceCategory android:title="@string/pref_in_title">
+
+        <CheckBoxPreference
+            android:key="@string/pref_in_imperial_key"
+            android:title="@string/pref_in_imperial_name_title"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_in_metric_key"
+            android:title="@string/pref_in_metric_title"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_in_kelvin_key"
+            android:title="@string/pref_in_kelvin_title"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
