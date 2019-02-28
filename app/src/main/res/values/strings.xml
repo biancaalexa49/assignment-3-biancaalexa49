@@ -26,6 +26,8 @@
 
     <string name="pref_location_key">Location</string>
     <string name="pref_location_title">Location</string>
+    <string name="pref_location_default_value">Corvallis, OR, US</string>
+
 
 
 

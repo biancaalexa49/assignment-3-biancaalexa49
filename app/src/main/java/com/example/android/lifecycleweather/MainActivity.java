@@ -79,7 +79,10 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.O
         args.putString(FORECAST_URL_KEY, url);
         getSupportLoaderManager().initLoader(FORECAST_LOADER_ID, args, this);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        currentForecast(preferences);
     }
+
 
     @Override
     public void onForecastItemClick(OpenWeatherMapUtils.ForecastItem forecastItem) {
@@ -147,8 +150,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.O
         }
     }
 
-    public String currentForecast() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    public void currentForecast(SharedPreferences preferences) {
 
         String location = preferences.getString(getString(R.string.pref_location_key), "");
         String units = "";
@@ -167,17 +169,28 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.O
         if(unitsKelvin) {
             units = "kelvin";
         }
+        mForecastLocationTV.setText(location);
         String openWeatherMapForecastURL = OpenWeatherMapUtils.buildForecastURL(location, units);
-        return openWeatherMapForecastURL;
+        Bundle args = new Bundle();
+        args.putString(FORECAST_URL_KEY, openWeatherMapForecastURL);
+        mLoadingIndicatorPB.setVisibility(View.VISIBLE);
+        getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, args, this);
+
     }
 
     public void showForecastLocation() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String forecastLocation = sharedPreferences.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default_value)
+        );
         Uri geoUri = Uri.parse("geo:0,0").buildUpon()
-                .appendQueryParameter("q", WeatherPreferences.getDefaultForecastLocation())
+                .appendQueryParameter("q", forecastLocation)
                 .build();
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         }
     }
+
 }
